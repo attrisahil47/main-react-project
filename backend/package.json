@@ -1,0 +1,22 @@
+{
+  "name": "main_nodejs-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "Sahil",
+  "license": "ISC",
+  "dependencies": {
+    "antd": "^5.24.3",
+    "axios": "^1.8.1",
+    "colors": "^1.4.0",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "http": "^0.0.1-security",
+    "joi": "^17.13.3",
+    "mongoose": "^8.12.0"
+  }
+}
