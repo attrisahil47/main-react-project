@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+require("dotenv").config()
 const express = require("express");
 const colors = require("colors");
 const backend = express();
@@ -18,7 +19,7 @@ backend.use(cors({
 backend.use(routes)
 
 
-mongoose.connect("mongodb+srv://attrisahil47:sOSZTVrmU6HRRL8o@backend.gney5.mongodb.net/")
+mongoose.connect(process.env.MONGO_DB_URI)
 .then(() => {
     console.log(colors.green("✓ DB is connected with Backend"));
     const PORT = 5000;
