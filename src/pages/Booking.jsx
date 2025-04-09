@@ -2,17 +2,48 @@ import React from "react";
 import { Form, Input, Button, DatePicker, TimePicker, Select } from "antd";
 import Navbar from "../component/Navbar";
 import Footer from "../component/Footer";
+import axios from "axios";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const { Option } = Select;
 
 const Booking = () => {
-  const onFinish = (values) => {
-    console.log("Booking values:", values);
-    // Add your API call here (e.g., axios.post(...))
+  const onFinish = async (values) => {
+    console.log("Booking Data:", values); // Log the booking data in the console
+
+    try {
+      const response = await axios.post("http://localhost:5000/api/auth/booking", values);
+      
+      if (response.data.success) {
+        toast.success(" Booking confirmed successfully!", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      } 
+      else {
+        toast.error(response.data.message || " Something went wrong!", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || " Failed to book the consultation!", {
+        position: "top-right",
+        autoClose: 3000,
+      });
+    }
   };
 
   const onFinishFailed = (errorInfo) => {
-    console.log("Booking failed:", errorInfo);
+    toast.error(" Please fill all required fields correctly.", {
+      position: "top-right",
+      autoClose: 3000,
+    });
   };
 
   return (
@@ -22,17 +53,15 @@ const Booking = () => {
       {/* Hero Section */}
       <section className="booking-hero">
         <div className="hero-content">
-          <h1 className="hero-title">Book an Appointment</h1>
-          <p className="hero-subtitle">
-            Schedule your visit with our expert doctors easily.
-          </p>
+          <h1 className="text-5xl font-bold mb-4">Book a Consultation</h1>
+          <p className="text-xl">Schedule your visit with our expert doctors easily.</p>
         </div>
       </section>
 
       {/* Booking Form Container */}
       <div className="booking-page">
         <div className="booking-container">
-          <h2 className="booking-title">Appointment Details</h2>
+          <h2 className="text-2xl mb-4 text-black">Booking Details</h2>
           <Form
             name="booking"
             layout="vertical"
@@ -50,10 +79,10 @@ const Booking = () => {
 
             <Form.Item
               label="Email"
-              name="email"
+              name="emailAddress"
               rules={[
                 { required: true, message: "Please enter your email!" },
-                { type: "email", message: "Enter a valid email!" },
+                { type: "email", message: "Please enter a valid email!" },
               ]}
             >
               <Input placeholder="Enter your email" className="input-field" />
@@ -62,23 +91,35 @@ const Booking = () => {
             <Form.Item
               label="Phone"
               name="phone"
-              rules={[{ required: true, message: "Please enter your phone number!" }]}
+              rules={[
+                { required: true, message: "Please enter your phone number!" },
+                { pattern: /^\d{10}$/, message: "Phone number must be exactly 10 digits!" },
+              ]}
             >
-              <Input placeholder="Enter your phone number" className="input-field" />
+              <Input
+                placeholder="Enter your phone number"
+                className="input-field"
+                maxLength={10}
+                onKeyPress={(e) => {
+                  if (!/^[0-9]$/.test(e.key)) {
+                    e.preventDefault();
+                  }
+                }}
+              />
             </Form.Item>
 
             <Form.Item
-              label="Appointment Date"
-              name="date"
-              rules={[{ required: true, message: "Please select an appointment date!" }]}
+              label="Booking Date"
+              name="bookingDate"
+              rules={[{ required: true, message: "Please select a booking date!" }]}
             >
               <DatePicker className="input-field" style={{ width: "100%" }} />
             </Form.Item>
 
             <Form.Item
-              label="Appointment Time"
-              name="time"
-              rules={[{ required: true, message: "Please select an appointment time!" }]}
+              label="Booking Time"
+              name="bookingTime"
+              rules={[{ required: true, message: "Please select a booking time!" }]}
             >
               <TimePicker className="input-field" style={{ width: "100%" }} />
             </Form.Item>
@@ -100,17 +141,13 @@ const Booking = () => {
               </Select>
             </Form.Item>
 
-            <Form.Item
-              label="Additional Message"
-              name="message"
-              rules={[{ required: false }]}
-            >
+            <Form.Item label="Additional Message" name="message">
               <Input.TextArea placeholder="Any special requirements?" className="input-field" rows={4} />
             </Form.Item>
 
             <Form.Item>
-              <Button type="primary" htmlType="submit" className="booking-btn">
-                Book Appointment
+              <Button type="primary" htmlType="submit" className="w-full booking-btn">
+                Confirm Booking
               </Button>
             </Form.Item>
           </Form>

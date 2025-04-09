@@ -19,11 +19,7 @@ const Signup = () => {
         toast.success(response.data.message || "Signup successful! Redirecting to login...", {
           position: "top-right",
           autoClose: 2000, 
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          theme: "colored",
+          
         });
 
         //redirect from the login page after signup successfully
@@ -35,11 +31,7 @@ const Signup = () => {
       toast.error(error.response?.data?.message || "Signup failed!", {
         position: "top-right",
         autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        theme: "colored",
+       
       });
     }
   };

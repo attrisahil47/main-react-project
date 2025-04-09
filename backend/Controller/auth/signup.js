@@ -1,4 +1,4 @@
-const {message} = require("antd");
+const { message } = require("antd");
 const User = require("../../Models/user.model");
 const { signupValidation } = require("../../Services/validation_schema");
 
@@ -7,10 +7,18 @@ const signup = async (req, res, next) => {
     // Validate incoming data
     const signupValues = await signupValidation.validateAsync(req.body);
     const { fullName, emailAddress, password, confirmPassword } = signupValues;
-    console.log(signupValues);
-    
 
-    // Check if email already exists
+    console.log(signupValues);
+
+    //  Check if passwords match FIRST
+    // if (password !== confirmPassword) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: "Passwords do not match.",
+    //   });
+    // }
+
+    //  Now check if email already exists
     const existingUser = await User.findOne({ emailAddress });
 
     if (existingUser) {
@@ -20,19 +28,11 @@ const signup = async (req, res, next) => {
       });
     }
 
-    // Check if passwords match
-    if (password !== confirmPassword) {
-      return res.status(400).json({
-        success: false,
-        message: "Passwords do not match.",
-      });
-    }
-
-    
+    // Save user if all checks pass
     const newUser = new User({
       fullName,
       emailAddress,
-      password, 
+      password,
     });
 
     await newUser.save();
@@ -48,4 +48,3 @@ const signup = async (req, res, next) => {
 };
 
 module.exports = signup;
-

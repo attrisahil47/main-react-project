@@ -9,14 +9,19 @@ const userSchema = new Schema(
     emailAddress: {
       type: String,
       required: true,
-      unique: true, // Ensures no duplicate emails
+      unique: true,
     },
     password: {
       type: String,
       required: true,
     },
+    role: {
+      type: String,
+      // enum: ["user", "admin"], // Optional: restrict to allowed roles
+      default: "user",         // Default role
+    },
   },
-  { timestamps: true } // Automatically adds createdAt & updatedAt fields
+  { timestamps: true }
 );
 
 module.exports = model("User", userSchema, "users");

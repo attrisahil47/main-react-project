@@ -1,21 +1,40 @@
 import React from "react";
-import { Form, Input, Button } from "antd";
+import { Form, Input, Button, message } from "antd";
+import axios from "axios";
 import Navbar from "../component/Navbar";
 import Footer from "../component/Footer";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Contact() {
-  const onFinish = (values) => {
-    console.log("Form Submitted:", values);
-    // You can add your API call here, e.g., axios.post(...)
+  const onFinish = async (values) => {
+    try {
+      const response = await axios.post("http://localhost:5000/api/auth/contact", values);
+      if (response.data.success) {
+        toast.success(" Your message has been sent successfully!", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      } else {
+        message.error(response.data.message || "Something went wrong!");
+      }
+    } catch (error) {
+      message.error(error.response?.data?.message || "Failed to send message!");
+    }
   };
 
   const onFinishFailed = (errorInfo) => {
-    console.log("Form Submission Failed:", errorInfo);
+    message.error("Please fill all required fields correctly.");
   };
 
   return (
     <>
       <Navbar />
+    
 
       {/* Hero Section */}
       <section className="contact-hero">
@@ -42,9 +61,7 @@ function Contact() {
             <Form.Item
               label="Full Name"
               name="fullName"
-              rules={[
-                { required: true, message: "Please enter your full name!" },
-              ]}
+              rules={[{ required: true, message: "Please enter your full name!" }]}
             >
               <Input placeholder="Full Name" className="input-field" />
             </Form.Item>
@@ -61,23 +78,32 @@ function Contact() {
             </Form.Item>
 
             <Form.Item
-              label="Phone"
-              name="phone"
-              rules={[
-                { required: true, message: "Please enter your phone number!" },
-              ]}
-            >
-              <Input placeholder="Phone" className="input-field" />
-            </Form.Item>
+  label="Phone"
+  name="phone"
+  rules={[
+    { required: true, message: "Please enter your phone number!" },
+    { pattern: /^\d{10}$/, message: "Phone number must be exactly 10 digits!" },
+  ]}
+>
+  <Input
+    placeholder="Phone"
+    className="input-field"
+    maxLength={10}
+    onKeyPress={(e) => {
+      if (!/^[0-9]$/.test(e.key)) {
+        e.preventDefault();
+      }
+    }}
+  />
+</Form.Item>
+
 
             <Form.Item
               label="Message"
               name="message"
-              rules={[
-                { required: true, message: "Please enter your message!" },
-              ]}
+              rules={[{ required: true, message: "Please enter your message!" }]}
             >
-              <Input.TextArea placeholder="Any comment or your query" className="input-field" rows={4} />
+              <Input.TextArea placeholder="Your comment or query" className="input-field" rows={4} />
             </Form.Item>
 
             <Form.Item>

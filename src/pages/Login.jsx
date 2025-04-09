@@ -1,22 +1,25 @@
 import React from "react";
 import { Form, Input, Button, Checkbox } from "antd";
 import { NavLink, useNavigate } from "react-router"; // Import useNavigate
-import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Navbar from "../component/Navbar";
 import Footer from "../component/Footer";
+import axiosInstance from "../../axiosInstance"
+import baseURL from "../../config";
 
 const Login = () => {
   const navigate = useNavigate(); // Initialize useNavigate
 
   const onFinish = (values) => {
     console.log("Success:", values);
-    axios
-      .post("http://localhost:5000/api/auth/login", values)
+    axiosInstance
+      .post(`${baseURL}/auth/login`, values)
       .then((response) => {
         toast.success("Login successful!", { position: "top-right" });
-
+        localStorage.setItem("accessToken",response.data.jwtToken);
+        localStorage.setItem("role",response.data.role);
+        console.log(response.data.jwtToken)
         // Redirect to home page after 2 seconds
         setTimeout(() => {
           navigate("/home"); // Redirect to Home
@@ -54,7 +57,7 @@ const Login = () => {
           layout="vertical"
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
-          className="auth-form"
+          // className="auth-form"
         >
           <Form.Item
             label="Email"
